@@ -28,12 +28,11 @@ class CreateShopTable extends Migration
             $table->string('currency')->nullable();
             $table->string('iana_timezone')->nullable();
             $table->string('shop_owner')->nullable();
-            $table->string('plan_name');
             $table->string('app_plan')->nullable();
             $table->string('myshopify_domain');
             $table->string('status')->nullable();
+            $table->string('platform');
             $table->tinyInteger('on_boarding')->default(0);
-            $table->string('is_version_app')->nullable();
             $table->string('access_token')->nullable();
             $table->timestamps();
 

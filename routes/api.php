@@ -22,3 +22,5 @@ Route::get('install', function () {
 });
 
 Route::post('install', 'AppController@installHandle')->name('app.installHandle');
+
+Route::get('auth', 'AppController@auth')->name('app.auth');
