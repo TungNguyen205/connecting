@@ -170,11 +170,11 @@ class SpfService {
      *
      * @return mixed
      */
-    public function getRequest($url, $data = [])
+    public function getRequest(string $url, array $data = []) : array
     {
         $client = new Client();
         try{
-            $response = $client->request( 'GET', "https://$this->_shopDomain/admin/$url",
+            $response = $client->request('GET', "https://$this->_shopDomain/admin/$url",
                 [
                     'headers' => [
                         'Content-Type' => 'application/json',
@@ -183,8 +183,26 @@ class SpfService {
                     'query' => $data
                 ]
             );
-            $this->sleepWhenApiLimited($response->getHeader('X-Shopify-Shop-Api-Call-Limit'));
-            return ['status' => true, 'data' => json_decode($response->getBody()->getContents())];
+            $header = $response->getHeaders();
+            $pageInfo = '';
+            if (isset($header['Link'])) {
+                $linkString = $header['Link'][0];
+                $linkArr = explode(",", $linkString);
+                foreach($linkArr as $link) {
+                    $rel = explode(";", $link);
+                    if( strpos(trim($rel[1],' '), 'next') ) {
+                        $search = '&page_info=';
+                        $start = strpos($rel[0],$search)+strlen($search);
+                        $end = strpos($rel[0],'>');
+                        $pageInfo = substr($rel[0],$start,$end-$start);
+                    }
+                }
+            }
+
+            return ['status' => true,
+                'page_info'    => $pageInfo,
+                'data'      => json_decode($response->getBody()->getContents(), true)
+            ];
         } catch (\Exception $exception)
         {
             return ['status' => false, 'message' => $exception->getMessage()];

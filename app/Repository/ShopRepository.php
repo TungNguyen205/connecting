@@ -34,4 +34,11 @@ class ShopRepository
         return ShopModel::create($args);
     }
 
+    public function getShopAttributes( array $data = [])
+    {
+        $shopInfo = ShopModel::where( $data )->first();
+        if($shopInfo)
+            return $shopInfo->toArray();
+        return false;
+    }
 }
