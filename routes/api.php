@@ -24,3 +24,6 @@ Route::get('install', function () {
 Route::post('install', 'AppController@installHandle')->name('app.installHandle');
 
 Route::get('auth', 'AppController@auth')->name('app.auth');
+Route::group(['prefix' => 'product'], function() {
+    Route::get('list', 'ProductController@list')->name('product.list');
+});
