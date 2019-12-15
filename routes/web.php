@@ -15,3 +15,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/login',['as' => 'home_path','uses' => function () {
+    return view('index');
+}]);
