@@ -63,10 +63,24 @@ class ShopRepository
         }
     }
 
+    public function checkShop(string $shopId)
+    {
+        $shopInfo = ShopModel::find($shopId);
+        if($shopInfo) {
+            return $shopInfo->toArray();
+        }
+
+        return false;
+    }
+
     private function generateToken($data)
     {
         $data['expiresin'] = time() + env('JWT_EXPIRE');
         return  JWT::encode($data, env('JWT_KEY'));
+    }
+
+    public function auth(string $verify_signature = ''): array {
+        return (array) JWT::decode($verify_signature, env('JWT_KEY'), array('HS256'));
     }
 
 }

@@ -28,7 +28,7 @@ Route::group(['prefix' => 'product'], function() {
     Route::get('list', 'ProductController@list')->name('product.list');
 });
 
-Route::group(['prefix' => 'social'], function() {
+Route::group(['prefix' => 'social', 'middleware' => 'permission'], function() {
     Route::get('generate_url', 'SocialController@generateUrl');
     Route::get('twitter/auth', 'SocialController@authTwitter');
 });
