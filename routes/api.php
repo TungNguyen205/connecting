@@ -27,3 +27,11 @@ Route::get('auth', 'AppController@auth')->name('app.auth');
 Route::group(['prefix' => 'product'], function() {
     Route::get('list', 'ProductController@list')->name('product.list');
 });
+
+Route::group(['prefix' => 'social'], function() {
+    Route::get('generate_url', 'SocialController@generateUrl');
+    Route::get('twitter/auth', 'SocialController@authTwitter');
+});
+
+
+

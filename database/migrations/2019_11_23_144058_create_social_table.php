@@ -18,6 +18,7 @@ class CreateSocialTable extends Migration
             $table->string('name');
             $table->string('email');
             $table->string('avatar_url');
+            $table->string('access_token', 1000);
             $table->bigInteger('user_id')->unsigned();
             $table->timestamps();
 
