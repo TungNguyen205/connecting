@@ -31,7 +31,6 @@ class Permission
                 $data['message'] = 'Token expired';
                 return response()->json($data, 401);
             }
-
             $shop = $shopRepository->checkShop($shop['id']);
             if(empty($shop) || !$shop['status']) {
                 $data['data'] = [
