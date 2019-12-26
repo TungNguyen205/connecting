@@ -6,7 +6,7 @@ use App\Repository\ShopRepository;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Redis;
 
-class Permission
+class AuthShop
 {
     public function handle($request, Closure $next)
     {
@@ -40,7 +40,7 @@ class Permission
                 return response()->json($data, 401);
             } else {
                 $request->attributes->add(['shopInfo' => $shop]);
-                $request->request->set('userInfo', $shop);
+                $request->request->set('shopInfo', $shop);
                 return $next($request);
             }
         } catch (\Exception $ex) {

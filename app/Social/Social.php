@@ -9,9 +9,14 @@ class Social
         $this->twitter = $twitter;
     }
 
-    public function generateUrl($socialType)
+    public function generateUrl($socialType, $token)
     {
-        return $this->{$socialType}->generateUrl();
+        return $this->{$socialType}->generateUrl($token);
+    }
+
+    public function auth($socialType, $request)
+    {
+        return $this->{$socialType}->auth($request);
     }
 
 }

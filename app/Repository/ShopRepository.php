@@ -73,7 +73,7 @@ class ShopRepository
         return false;
     }
 
-    private function generateToken($data)
+    public function generateToken($data)
     {
         $data['expiresin'] = time() + env('JWT_EXPIRE');
         return  JWT::encode($data, env('JWT_KEY'));

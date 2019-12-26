@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+\URL::forceScheme('https');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
@@ -28,10 +29,11 @@ Route::group(['prefix' => 'product'], function() {
     Route::get('list', 'ProductController@list')->name('product.list');
 });
 
-Route::group(['prefix' => 'social', 'middleware' => 'permission'], function() {
-    Route::get('generate_url', 'SocialController@generateUrl');
-    Route::get('twitter/auth', 'SocialController@authTwitter');
+Route::group(['prefix' => 'social'], function() {
+    Route::post('generate_url', 'SocialController@generateUrl')->middleware('auth.shop');
+    Route::get('auth', 'SocialController@auth')->name('social.callback');
 });
+
 
 
 
