@@ -16,7 +16,7 @@ class CreatePostTable extends Migration
         Schema::create('post', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->longText('content');
-            $table->bigInteger('social_id')->unsigned();
+            $table->bigInteger('social_id');
             $table->tinyInteger('is_schedule')->default(0);
             $table->dateTime('schedule_time')->nullable();
             $table->tinyInteger('is_repeat')->default(0);

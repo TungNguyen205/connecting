@@ -18,7 +18,7 @@ class CreateProductTable extends Migration
             $table->string('title', 1000);
             $table->string('handle', 1000)->nullable();
             $table->string('image', 2000)->nullable();
-            $table->bigInteger('shop_id');
+            $table->bigInteger('shop_id')->unsigned();
             $table->string('price');
             $table->timestamps();
 

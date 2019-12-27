@@ -14,8 +14,10 @@ class CreateShopTable extends Migration
     public function up()
     {
         Schema::create('shop', function (Blueprint $table) {
-            $table->bigInteger('id')->primary();
-            $table->bigInteger('user_id')->unsigned();
+            $table->bigIncrements('id');
+            $table->bigInteger('platform_id')->nullable();
+            $table->string('platform')->nullable();
+            $table->bigInteger('user_id')->unsigned()->nullable();
             $table->string('name');
             $table->string('email');
             $table->string('domain')->nullable();
@@ -31,7 +33,6 @@ class CreateShopTable extends Migration
             $table->string('app_plan')->nullable();
             $table->string('myshopify_domain');
             $table->string('status')->nullable();
-            $table->string('platform');
             $table->tinyInteger('on_boarding')->default(0);
             $table->string('access_token')->nullable();
             $table->timestamps();

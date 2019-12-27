@@ -17,17 +17,17 @@ class ShopRepository
      * @param string $shopId
      * @return mixed
      */
-    public function detail(string $shopId)
+    public function detailByPlatform(string $platformId)
     {
-        if($shopInfo = ShopModel::find($shopId))
+        if($shopInfo = ShopModel::where('platform_id', $platformId)->first())
             return $shopInfo;
 
         return false;
     }
 
-    public function createOrUpdate(float $id, array $args)
+    public function createOrUpdate(float $platformId, array $args)
     {
-        $shop = ShopModel::find($id);
+        $shop = ShopModel::where('platform_id', $platformId)->first();
         if($shop) {
             return $shop->update($args);
         }
@@ -44,7 +44,7 @@ class ShopRepository
 
     public function login($shopDomain)
     {
-        $shop = ShopModel::select(['id', 'name', 'email', 'domain', 'myshopify_domain', 'shop_owner', 'iana_timezone', 'currency'])
+        $shop = ShopModel::select(['id', 'platform_id', 'name', 'email', 'domain', 'myshopify_domain', 'shop_owner', 'iana_timezone', 'currency'])
             ->where('myshopify_domain', $shopDomain)
             ->first();
         if(!empty($shop))
@@ -63,9 +63,9 @@ class ShopRepository
         }
     }
 
-    public function checkShop(string $shopId)
+    public function checkByPlatform(string $platformId)
     {
-        $shopInfo = ShopModel::find($shopId);
+        $shopInfo = ShopModel::where('platform_id', $platformId)->first();
         if($shopInfo) {
             return $shopInfo->toArray();
         }

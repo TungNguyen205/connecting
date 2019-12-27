@@ -31,7 +31,7 @@ class AuthShop
                 $data['message'] = 'Token expired';
                 return response()->json($data, 401);
             }
-            $shop = $shopRepository->checkShop($shop['id']);
+            $shop = $shopRepository->checkByPlatform($shop['platform_id']);
             if(empty($shop) || !$shop['status']) {
                 $data['data'] = [
                     'error_code' => 101,

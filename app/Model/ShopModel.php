@@ -26,6 +26,8 @@ class ShopModel extends Model
      */
     protected $fillable = [
         'id',
+        'platform_id',
+        'platform',
         'user_id',
         'name',
         'email',
@@ -43,8 +45,7 @@ class ShopModel extends Model
         'myshopify_domain',
         'status',
         'on_boarding',
-        'access_token',
-        'platform',
+        'access_token'
     ];
     protected $dates = [
         'created_at',
