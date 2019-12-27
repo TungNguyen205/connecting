@@ -14,17 +14,18 @@ class CreateSocialTable extends Migration
     public function up()
     {
         Schema::create('social', function (Blueprint $table) {
-            $table->bigInteger('id')->primary();
-            $table->string('name');
-            $table->string('email');
-            $table->string('avatar_url');
-            $table->string('access_token', 1000);
-            $table->bigInteger('user_id')->unsigned();
+            $table->bigIncrements('id');
+            $table->string('social_id')->nullable();
+            $table->string('social_url')->nullable();
+            $table->string('name')->nullable();
+            $table->string('slug')->nullable();
+            $table->string('email')->nullable();
+            $table->string('avatar')->nullable();
+            $table->string('social_type');
+            $table->string('access_token', 1000)->nullable();
             $table->bigInteger('shop_id')->unsigned();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')
-                ->onUpdate('cascade');
         });
     }
 
