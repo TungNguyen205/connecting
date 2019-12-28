@@ -77,7 +77,7 @@ class Twitter
                 'shop_id' => $userInfo['id'],
             ];
 
-            return $this->socialRepository->create($socialParams);
+            return $this->socialRepository->createOrUpdate($socialParams);
         }
 
         return ['status' => true, 'data' => 'a'];

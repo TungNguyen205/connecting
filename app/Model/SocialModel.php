@@ -25,7 +25,7 @@ class SocialModel extends Model
      * @var array
      */
     protected $fillable = [
-        'social_id', 'social_url', 'name', 'slug', 'email', 'avatar', 'social_type', 'access_token', 'shop_id'
+        'social_id', 'social_url', 'name', 'username', 'email', 'avatar', 'social_type', 'access_token', 'shop_id'
     ];
 
     protected $casts = [

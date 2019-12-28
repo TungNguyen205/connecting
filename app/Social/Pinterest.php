@@ -53,14 +53,14 @@ class Pinterest
                 $params = [
                     'social_id' => $data['id'],
                     'social_url' => $data['url'],
-                    'name' => $data['username'],
-                    'slug' => $data['bio'],
+                    'name' => $data['first_name'],
+                    'username' => $data['username'],
                     'avatar' => $data['image']['60x60']['url'],
                     'social_type' => config('pinterest.name'),
                     'access_token' => $accessTokenResponse['data']->access_token,
                     'shop_id' => $request['userInfo']['id'],
                 ];
-                $data = $this->socialRepository->create($params);
+                $data = $this->socialRepository->createOrUpdate($params);
                 return response()->json(['status' => true, 'data' => $data]);
             }
         }

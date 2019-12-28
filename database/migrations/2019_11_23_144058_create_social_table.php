@@ -18,7 +18,7 @@ class CreateSocialTable extends Migration
             $table->string('social_id')->nullable();
             $table->string('social_url')->nullable();
             $table->string('name')->nullable();
-            $table->string('slug')->nullable();
+            $table->string('username')->nullable();
             $table->string('email')->nullable();
             $table->string('avatar')->nullable();
             $table->string('social_type');

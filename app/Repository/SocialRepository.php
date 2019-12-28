@@ -12,8 +12,11 @@ use Illuminate\Support\Facades\Log;
 class SocialRepository
 {
 
-    public function create(array $args)
+    public function createOrUpdate(array $args)
     {
+        if($social = SocialModel::where('social_id', $args['social_id'])->first()) {
+            return $social->update($args);
+        }
         return SocialModel::create($args);
     }
 }
