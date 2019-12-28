@@ -55,7 +55,7 @@ class Pinterest
                     'social_url' => $data['url'],
                     'name' => $data['username'],
                     'slug' => $data['bio'],
-                    'avatar' => $data['url'],
+                    'avatar' => $data['image']['60x60']['url'],
                     'social_type' => config('pinterest.name'),
                     'access_token' => $accessTokenResponse['data']->access_token,
                     'shop_id' => $request['userInfo']['id'],
