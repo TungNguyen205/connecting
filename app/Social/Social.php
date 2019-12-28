@@ -3,10 +3,12 @@ namespace App\Social;
 class Social
 {
     private $twitter;
+    private $pinterest;
 
-    public function __construct(Twitter $twitter)
+    public function __construct(Twitter $twitter, Pinterest $pinterest)
     {
         $this->twitter = $twitter;
+        $this->pinterest = $pinterest;
     }
 
     public function generateUrl($socialType, $token)
