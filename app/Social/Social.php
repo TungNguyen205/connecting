@@ -4,11 +4,13 @@ class Social
 {
     private $twitter;
     private $pinterest;
+    private $tumblr;
 
-    public function __construct(Twitter $twitter, Pinterest $pinterest)
+    public function __construct(Twitter $twitter, Pinterest $pinterest, Tumblr $tumblr)
     {
         $this->twitter = $twitter;
         $this->pinterest = $pinterest;
+        $this->tumblr = $tumblr;
     }
 
     public function generateUrl($socialType, $token)

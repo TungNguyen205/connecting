@@ -14,9 +14,24 @@ class SocialRepository
 
     public function createOrUpdate(array $args)
     {
-        if($social = SocialModel::where('social_id', $args['social_id'])->first()) {
+        $social = SocialModel::where(function ($query) use ($args){
+            $query->where('social_id', $args['social_id'])
+            ->orWhere(function ($query2) use($args) {
+                $query2->where('shop_id', $args['shop_id'])->where('social_type', $args['social_type']);
+            });
+        })->first();
+        if($social) {
             return $social->update($args);
         }
         return SocialModel::create($args);
+    }
+
+    public function getBy(array $condition)
+    {
+        $social = SocialModel::where($condition)->first();
+        if($social) {
+            return $social->toArray();
+        }
+        return null;
     }
 }
