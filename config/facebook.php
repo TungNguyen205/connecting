@@ -8,5 +8,9 @@ return [
         'email',
         'public_profile',
         'pages_show_list'
+    ],
+    'url' => [
+        'base'  => 'https://www.facebook.com/',
+        'api'   => 'https://graph.facebook.com/'
     ]
 ];
