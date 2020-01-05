@@ -15,17 +15,27 @@ class CreatePostTable extends Migration
     {
         Schema::create('post', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->longText('content');
-            $table->bigInteger('social_id')->unsigned();
-            $table->tinyInteger('is_schedule')->default(0);
-            $table->dateTime('schedule_time')->nullable();
+            $table->string('post_type')->nullable();
+            $table->string('product_id')->nullable();
+            $table->string('meta_link')->nullable();
+            $table->string('sub_type')->nullable();
+            $table->text('message')->nullable();
+            $table->dateTime('time_on')->nullable();
+            $table->string('social_ids')->nullable();
+            $table->string('social_id')->nullable();
+            $table->integer('shop_id')->nullable();
+            $table->integer('user_id')->nullable();
+            $table->string('social_type');
+            $table->enum('status', ['scheduled', 'published', 'draft']);
             $table->tinyInteger('is_repeat')->default(0);
             $table->integer('repeat_value')->nullable();
             $table->string('repeat_unit')->nullable();
+            $table->string('post_social_id')->nullable();
+            $table->boolean('publish_is_error')->default(false);
+            $table->string('error_message')->nullable();
+            $table->string('media_index')->nullable();
+            $table->text('social_insight')->nullable();
             $table->timestamps();
-
-            $table->foreign('social_id')->references('id')->on('social')->onDelete('cascade')
-                ->onUpdate('cascade');
         });
     }
 

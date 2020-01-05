@@ -34,6 +34,6 @@ Route::group(['prefix' => 'social'], function() {
     Route::get('auth', 'SocialController@auth')->name('social.callback')->middleware('auth.social');
 });
 
-
-
-
+Route::group(['prefix' => 'post'], function() {
+    Route::post('', 'SocialController@postSocial')->middleware('auth.shop');
+});

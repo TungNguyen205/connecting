@@ -7,10 +7,20 @@ return [
     'permission' => [
         'email',
         'public_profile',
-        'pages_show_list'
+        'pages_show_list',
+        // only dev
+        'manage_pages',
+        'publish_pages'
     ],
     'url' => [
         'base'  => 'https://www.facebook.com/',
         'api'   => 'https://graph.facebook.com/'
-    ]
+    ],
+    'post_type'=> [
+        'link' => 'link',
+        'image' => 'image',
+        'video' => 'video',
+        'product' => 'product',
+        'text' => 'text'
+    ],
 ];

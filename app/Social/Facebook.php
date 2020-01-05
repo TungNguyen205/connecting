@@ -174,4 +174,133 @@ class Facebook
         return config('facebook.url.api').config('facebook.api_version').'/'.$pageId.'/picture';
     }
 
+    public function postSocial($data){
+//        dd($data);
+        $account = $data['socials'];
+
+        try {
+            $token = $this->getToken($account['access_token'], 'page');
+
+            $type = $data['post_type'];
+            $source = [];
+
+            switch ($type) {
+                case config('facebook.post_type.link'):
+                    $source = $this->processForLinkType($token, $data);
+                    break;
+                case config('facebook.post_type.text'):
+                    $source =[
+                        'status' => true,
+                        'data' => [
+                            'published' => true,
+                            'message' => $data['message'],
+                        ]
+                    ] ;
+                    break;
+                case config('facebook.post_type.image'):
+                    $source = $this->processForImageType($token, $data);
+                    break;
+                case config('facebook.post_type.video'):
+                    break;
+                case config('facebook.post_type.product'):
+                    $source = $this->processForProductType($token, $data);
+                    break;
+            }
+
+            if (!$source['status']) {
+                $this->proccessError($account['social_id'], $source);
+                return $source;
+            }
+            $response = $this->requestFacebookData('/me/feed', 'post', $source['data'], $token);
+            dd($response);
+            if ($response['status']) {
+                $response['data']['post_social_id'] = $response['data']['id'];
+                unset( $response['data']['id']);
+            } else {
+                $this->proccessError($account['social_id'], $response);
+            }
+
+        } catch (\Exception $ex) {
+            $response = [
+                'status' => false,
+                'data' => '',
+                'message' => $ex->getMessage(),
+                'code' => $ex->getCode()
+            ];
+            $this->proccessError($account['social_id'], $response);
+        }
+
+        return $response;
+    }
+
+    private function getToken($access_token, $type) {
+        return $access_token[$type];
+    }
+
+    private function processForLinkType($token,$data){
+        $source = [
+            'published' => true,
+            'message' => $data['message'],
+            'link' => $data['meta_link']
+        ];
+
+        return [
+            'status' => true,
+            'data' => $source
+        ];
+    }
+
+    private function processForProductType($token,$data){
+        $subType =  $data['sub_type'];
+        if($subType == config('social.post_sub_type.image')) {
+            return $this->processForImageType($token,$data);
+        } else {
+
+            $source = [
+                'published' => true,
+                'message' => $data['message'],
+                'link' => $data['meta_link']
+            ];
+        }
+        return [
+            'status' => true,
+            'data' => $source
+        ];
+    }
+
+    private function processForImageType($token,$data){
+        $source = [
+            'published' => true,
+            'message' => $data['message'],
+        ];
+
+        $result =   $this->upMedia($token, $data['medias']);
+
+
+        if (!$result['status']) {
+            return $result;
+        }
+        $images = $result['data'];
+        foreach ($images as $image){
+            $attachMedia[] = ['media_fbid' => $image];
+        }
+        $source['attached_media'] = $attachMedia;
+        return [
+            'status' => true,
+            'data' => $source
+        ];
+    }
+
+    private function proccessError($id,$error){
+        dd($error);
+        if ( isset($error['code']) && in_array($error['code'],config('social.facebook.reconnect_code') )) {
+            $sa = SocialAccount::where('social_id', $id)->first();
+            $sa->connect_error = [
+                'code' => $error['code'],
+                'message' => $error['message']
+            ];
+            $sa->save();
+        }
+    }
+
 }

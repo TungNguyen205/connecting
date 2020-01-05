@@ -39,8 +39,12 @@ class AuthShop
                 ];
                 return response()->json($data, 401);
             } else {
-                $request->attributes->add(['shopInfo' => $shop]);
-                $request->request->set('shopInfo', $shop);
+                $shopInfo = [
+                    'id' => $shop['id'],
+                    'user_id' => $shop['user_id'],
+                ];
+                $request->attributes->add(['shopInfo' => $shopInfo]);
+                $request->request->set('shopInfo', $shopInfo);
                 return $next($request);
             }
         } catch (\Exception $ex) {

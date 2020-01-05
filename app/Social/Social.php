@@ -25,4 +25,9 @@ class Social
         return $this->{$socialType}->auth($request);
     }
 
+    public function postSocial($socialType, $data)
+    {
+        return $this->{$socialType}->postSocial($data);
+    }
+
 }
