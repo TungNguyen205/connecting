@@ -37,3 +37,8 @@ Route::group(['prefix' => 'social'], function() {
 Route::group(['prefix' => 'post'], function() {
     Route::post('', 'SocialController@postSocial')->middleware('auth.shop');
 });
+
+Route::group(['prefix' => 'spf_webhook'], function () {
+    Route::get('{shopDomain}', 'SpfWebhookController@viewWebhook');
+    Route::get('add/{shopDomain}', 'SpfWebhookController@addWebhook');
+});

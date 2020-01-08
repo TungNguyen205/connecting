@@ -219,7 +219,6 @@ class SpfService {
     {
         $client = new Client();
         try{
-            $this->sendRequest();
             $response = $client->request(
                 'POST',
                 "https://$this->_shopDomain/admin/$url",
@@ -246,7 +245,6 @@ class SpfService {
         $client = new Client();
 
         try{
-            $this->sendRequest();
             $response = $client->request(
                 'PUT',
                 "https://$this->_shopDomain/admin/$url",
@@ -278,7 +276,6 @@ class SpfService {
     {
         $client = new Client();
         try{
-            $this->sendRequest();
             $response = $client->request('DELETE', "https://$this->_shopDomain/admin/$url",
                 [
                     'headers' => [
