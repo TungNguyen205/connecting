@@ -8,13 +8,13 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class ProductModel extends Model
+class PostMediaModel extends Model
 {
     public $incrementing = true;
     /**
      * @var string
      */
-    protected $table = 'product';
+    protected $table = 'post_media';
 
     /**
      * @var string
@@ -25,28 +25,16 @@ class ProductModel extends Model
      * @var array
      */
     protected $fillable = [
-        'id',
-        'platform_id',
-        'title',
-        'handle',
-        'image',
-        'images',
-        'shop_id',
-        'price'
+        'id', 'post_id', 'media_id'
     ];
     protected $dates = [
         'created_at',
         'updated_at'
     ];
 
-    protected $casts = [
-        'price' => 'array',
-        'image' => 'array',
-        'images' => 'array'
-    ];
-
     public function getIdAttribute($value)
     {
         return (float)($value);
     }
+
 }

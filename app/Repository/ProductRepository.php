@@ -9,7 +9,7 @@ class ProductRepository
 {
     function createOrUpdate(array $arg)
     {
-        if($product = ProductModel::find($arg['id']))
+        if($product = ProductModel::where('platform_id', $arg['platform_id'])->first())
             return $product->update($arg);
 
         return ProductModel::create($arg);
@@ -37,5 +37,14 @@ class ProductRepository
         $products =  $products->paginate($paginate)->toArray();
 
         return ['status' => true, 'data' => $products];
+    }
+
+    public function detail($productId, $shopId)
+    {
+        $product = ProductModel::where('id', $productId)->where('shop_id', $shopId)->first();
+        if(!empty($product)) {
+            return $product->toArray();
+        }
+        return null;
     }
 }

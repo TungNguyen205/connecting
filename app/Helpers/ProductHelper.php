@@ -7,10 +7,26 @@ class ProductHelper
 {
     public static function convertProductModel(array $product, array $meta = [])
     {
-        $data['id'] = $product['id'];
+        $data['platform_id'] = $product['id'];
         $data['title'] = $product['title'];
         $data['handle'] = $product['handle'];
-        $data['image'] = $product['image']['src'];
+        $data['image'] = [
+            'src' => $product['image']['src'],
+            'width' => $product['image']['width'],
+            'height' => $product['image']['height'],
+        ];
+        $data['images'] = [];
+        if(!empty($product['images'])) {
+            foreach($product['images'] as $image) {
+                $img = [
+                    'src' => $image['src'],
+                    'width' => $image['width'],
+                    'height' => $image['height'],
+                ];
+                array_push($data['images'], $img);
+            }
+        }
+
         $data['shop_id'] = $meta['shop_id'];
 
         $minPrice = $product['variants'][0]['price'];
@@ -28,6 +44,8 @@ class ProductHelper
             'min_price' => $minPrice,
             'max_price' => $maxPrice
         ];
+
+
 
         return $data;
     }

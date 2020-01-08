@@ -274,7 +274,7 @@ class Facebook
             'message' => $data['message'],
         ];
 
-        $result =   $this->upMedia($token, $data['medias']);
+        $result = $this->upMedia($token, $data['medias']);
 
 
         if (!$result['status']) {
@@ -289,6 +289,60 @@ class Facebook
             'status' => true,
             'data' => $source
         ];
+    }
+
+    protected  function upMedia($token, $sources) {
+        $post_images = [];
+        $photos = [];
+        if (empty($sources)) {
+            return [
+                'status' => false,
+                'data' => [],
+                'message' =>  __("socialpost_validation.get_facebook_infor_error"),
+            ];
+        }
+        try {
+            foreach ($sources as $source ) {
+                $data = [
+                    'published' =>false,
+                    'source' =>    $this->fb->fileToUpload($source)
+                ];
+                array_push($photos, $this->fb->request('POST','/me/photos',$data));
+            }
+
+
+            $uploaded_photos = $this->fb->sendBatchRequest($photos,  $token);
+            if($uploaded_photos->getHttpStatusCode() == 200) {
+                $respone = $uploaded_photos->getDecodedBody();
+
+                foreach ($respone as $item) {
+                    $payload = (json_decode($item['body'], true));
+                    $post_images[] = $payload['id'];
+                }
+
+
+
+                return [
+                    'status' => true,
+                    'data' => $post_images
+                ];
+            } else {
+                return [
+                    'status' => false,
+                    'data' => [],
+                    'code' => $uploaded_photos->getHttpStatusCode()
+                ];
+            }
+
+        } catch (\Exception $ex) {
+            return [
+                'status' => false,
+                'data' => [],
+                'code' => $ex->getCode(),
+                'message' => $ex->getMessage()
+            ];
+        }
+
     }
 
     private function proccessError($id,$error){

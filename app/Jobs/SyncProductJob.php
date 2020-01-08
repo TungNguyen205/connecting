@@ -63,6 +63,7 @@ class SyncProductJob implements ShouldQueue
             'title',
             'handle',
             'image',
+            'images',
             'variants'
         ];
         $limit = 250;
