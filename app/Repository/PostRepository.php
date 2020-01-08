@@ -14,7 +14,7 @@ class PostRepository
 {
     public function detail($id, $shopId, $userId)
     {
-        $post = PostModel::where('id', $id)->where('shop_id', $shopId)->where('user_id', $userId)->first();
+        $post = PostModel::with(['medias'])->where('id', $id)->where('shop_id', $shopId)->where('user_id', $userId)->first();
         if($post) {
             $post = $post->toArray();
             $socials = SocialModel::where('shop_id', $shopId)->whereIn('id', $post['social_ids'])
@@ -72,6 +72,6 @@ class PostRepository
             ];
             PostMediaModel::create($postMediaParams);
         }
-        return 'a';
+        return $post;
     }
 }

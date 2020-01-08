@@ -305,7 +305,7 @@ class Facebook
             foreach ($sources as $source ) {
                 $data = [
                     'published' =>false,
-                    'source' =>    $this->fb->fileToUpload($source)
+                    'source' =>    $this->fb->fileToUpload($source['url'])
                 ];
                 array_push($photos, $this->fb->request('POST','/me/photos',$data));
             }

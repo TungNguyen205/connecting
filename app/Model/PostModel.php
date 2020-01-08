@@ -44,4 +44,9 @@ class PostModel extends Model
         return (float)($value);
     }
 
+    public function medias()
+    {
+        return $this->belongsToMany('App\Model\MediaModel', 'App\Model\PostMediaModel', 'post_id', 'media_id');
+    }
+
 }
