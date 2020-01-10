@@ -37,6 +37,7 @@ Route::group(['prefix' => 'social'], function() {
 Route::group(['middleware' => 'auth.shop'], function() {
     Route::post('post', 'SocialController@postSocial');
     Route::post('auto_post', 'SocialController@autoPost');
+    Route::post('template', 'SocialController@template');
 });
 
 Route::group(['prefix' => 'spf_webhook'], function () {

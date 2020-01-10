@@ -14,6 +14,10 @@ class AutoPostRepository
 
     public function listSocial($shopId)
     {
-        return AutoPostModel::where('shop_id', $shopId)->pluck('social_id');
+        $autoPost = AutoPostModel::with('template')->where('shop_id', $shopId)->get();
+        if(!empty($autoPost)) {
+            return $autoPost->toArray();
+        }
+        return [];
     }
 }

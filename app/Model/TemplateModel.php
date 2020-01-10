@@ -4,17 +4,17 @@ namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
 /**
- * Class AutoPostModel
+ * Class TemplateModel
  *
  * @package App\Models
  */
-class AutoPostModel extends Model
+class TemplateModel extends Model
 {
     public $incrementing = true;
     /**
      * @var string
      */
-    protected $table = 'auto_post';
+    protected $table = 'template';
 
     /**
      * @var string
@@ -25,22 +25,15 @@ class AutoPostModel extends Model
      * @var array
      */
     protected $fillable = [
-       'id', 'shop_id', 'user_id', 'social_id'
+        'id', 'shop_id', 'auto_post_id', 'content'
     ];
     protected $dates = [
         'created_at',
         'updated_at'
     ];
 
-
     public function getIdAttribute($value)
     {
         return (float)($value);
     }
-
-    public function template()
-    {
-        return $this->hasOne('App\Model\TemplateModel', 'auto_post_id', 'id');
-    }
-
 }
