@@ -11,4 +11,9 @@ class AutoPostRepository
     {
         return AutoPostModel::create($arg);
     }
+
+    public function listSocial($shopId)
+    {
+        return AutoPostModel::where('shop_id', $shopId)->pluck('social_id');
+    }
 }
