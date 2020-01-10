@@ -96,7 +96,7 @@ class SyncProductJob implements ShouldQueue
                     'shop_id'   => $shop['id']
                 ];
                 $product = ProductHelper::convertProductModel($product, $meta);
-                $productRepo->createOrUpdate($product, $meta);
+                $productRepo->createOrUpdate($product);
             }
             DB::commit();
         } catch (\Exception $exception) {

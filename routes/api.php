@@ -34,11 +34,18 @@ Route::group(['prefix' => 'social'], function() {
     Route::get('auth', 'SocialController@auth')->name('social.callback')->middleware('auth.social');
 });
 
-Route::group(['prefix' => 'post'], function() {
-    Route::post('', 'SocialController@postSocial')->middleware('auth.shop');
+Route::group(['middleware' => 'auth.shop'], function() {
+    Route::post('post', 'SocialController@postSocial');
+    Route::post('auto_post', 'SocialController@autoPost');
 });
 
 Route::group(['prefix' => 'spf_webhook'], function () {
     Route::get('{shopDomain}', 'SpfWebhookController@viewWebhook');
     Route::get('add/{shopDomain}', 'SpfWebhookController@addWebhook');
 });
+
+Route::group(['prefix' => 'webhook'], function () {
+    Route::post('app_uninstalled', 'SpfWebhookController@uninstallApp');
+    Route::post('created_product', 'SpfWebhookController@createdProduct');
+});
+

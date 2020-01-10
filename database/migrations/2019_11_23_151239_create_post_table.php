@@ -27,9 +27,9 @@ class CreatePostTable extends Migration
             $table->integer('user_id')->nullable();
             $table->string('social_type');
             $table->enum('status', ['scheduled', 'published', 'draft']);
-            $table->tinyInteger('is_repeat')->default(0);
-            $table->integer('repeat_value')->nullable();
-            $table->string('repeat_unit')->nullable();
+//            $table->tinyInteger('is_repeat')->default(0);
+//            $table->integer('repeat_value')->nullable();
+//            $table->string('repeat_unit')->nullable();
             $table->string('post_social_id')->nullable();
             $table->boolean('publish_is_error')->default(false);
             $table->string('error_message')->nullable();
