@@ -175,7 +175,6 @@ class Facebook
     }
 
     public function postSocial($data){
-//        dd($data);
         $account = $data['socials'];
 
         try {

@@ -48,5 +48,6 @@ Route::group(['prefix' => 'spf_webhook'], function () {
 Route::group(['prefix' => 'webhook'], function () {
     Route::post('app_uninstalled', 'SpfWebhookController@uninstallApp');
     Route::post('created_product', 'SpfWebhookController@createdProduct');
+    Route::post('updated_product', 'SpfWebhookController@updatedProduct');
 });
 

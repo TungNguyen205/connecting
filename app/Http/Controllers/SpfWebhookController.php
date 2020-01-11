@@ -7,6 +7,8 @@ use App\Repository\ShopRepository;
 use App\ShopifyApi\WebHookApi;
 use App\Jobs\AddWebhookJob;
 use App\Jobs\HandleProductWebhookJob;
+
+use Illuminate\Support\Facades\Log;
 class SpfWebhookController extends Controller
 {
     function viewWebhook($shopName)
@@ -49,6 +51,7 @@ class SpfWebhookController extends Controller
     public function createdProduct(Request $request)
     {
         $res = $request->all();
+        Log::info(json_encode($res));
         $shopRepo = new ShopRepository();
         $shop_name = $request->server('HTTP_X_SHOPIFY_SHOP_DOMAIN');
         $shop = $shopRepo->getShopAttributes(['myshopify_domain' => $shop_name]);
@@ -57,6 +60,11 @@ class SpfWebhookController extends Controller
 
         HandleProductWebhookJob::dispatch($shop, json_decode(json_encode($res), true));
 
+        return response()->json(['status' => true]);
+    }
+
+    public function updatedProduct(Request $request)
+    {
         return response()->json(['status' => true]);
     }
 }
