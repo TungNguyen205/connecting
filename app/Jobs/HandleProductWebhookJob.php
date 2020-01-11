@@ -56,13 +56,9 @@ class HandleProductWebhookJob implements ShouldQueue
 
         $productDetail = $productRepo->detail($product->id, $this->_shop['id']);
 
-        $socials = $this->autoPostRepository->listSocial($this->_shop['id']);
+        $autoPost = $this->autoPostRepository->detail($this->_shop['id']);
 
-        if(!empty($socials)) {
-            $socialIds = [];
-            foreach($socials as $social) {
-                array_push($socialIds, $social['id']);
-            }
+        if(!empty($autoPost)) {
             $tags = Common::getTagList();
             $data = [];
             foreach($tags as $k=>$tag) {
@@ -74,14 +70,14 @@ class HandleProductWebhookJob implements ShouldQueue
                         break;
                 }
             }
-            $message = PostHelper::convertMessage($socials[0]['template']['content'], $data);
+            $message = PostHelper::convertMessage($autoPost['template']['content'], $data);
 
             $postParams = [
                 'post_type'     => 'image',
                 'meta_link'     => null,
                 'product_id'    => $productDetail['id'],
                 'message'       => $message,
-                'social_ids'    => $socialIds,
+                'social_ids'    => $autoPost['social_ids'],
                 'social_id'     => null,
                 'social_type'   => "facebook",
                 'status'        => "published"

@@ -25,7 +25,7 @@ class TemplateModel extends Model
      * @var array
      */
     protected $fillable = [
-        'id', 'shop_id', 'auto_post_id', 'content'
+        'id', 'shop_id', 'content'
     ];
     protected $dates = [
         'created_at',

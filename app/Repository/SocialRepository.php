@@ -34,4 +34,13 @@ class SocialRepository
         }
         return null;
     }
+
+    public function checkSocial($shopId, array $socialIds)
+    {
+        $socials = SocialModel::where('shop_id', $shopId)->whereIn('id', $socialIds)->get();
+        if($socials) {
+            return $socials->toArray();
+        }
+        return false;
+    }
 }

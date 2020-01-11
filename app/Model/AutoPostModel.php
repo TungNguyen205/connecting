@@ -25,11 +25,15 @@ class AutoPostModel extends Model
      * @var array
      */
     protected $fillable = [
-       'id', 'shop_id', 'user_id', 'social_id'
+       'id', 'shop_id', 'user_id', 'social_ids', 'template_id'
     ];
     protected $dates = [
         'created_at',
         'updated_at'
+    ];
+
+    protected $casts = [
+        'social_ids' => 'array'
     ];
 
 
@@ -40,7 +44,7 @@ class AutoPostModel extends Model
 
     public function template()
     {
-        return $this->hasOne('App\Model\TemplateModel', 'auto_post_id', 'id');
+        return $this->belongsTo('App\Model\TemplateModel', 'template_id', 'id');
     }
 
 }

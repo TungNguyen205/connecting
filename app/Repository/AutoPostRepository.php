@@ -12,9 +12,9 @@ class AutoPostRepository
         return AutoPostModel::create($arg);
     }
 
-    public function listSocial($shopId)
+    public function detail($shopId)
     {
-        $autoPost = AutoPostModel::with('template')->where('shop_id', $shopId)->get();
+        $autoPost = AutoPostModel::with('template')->where('shop_id', $shopId)->first();
         if(!empty($autoPost)) {
             return $autoPost->toArray();
         }
