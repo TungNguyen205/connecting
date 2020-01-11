@@ -1,3 +1,5 @@
 {
-  "product_title": "[product_title]"
+  "product_title": "[product_title]",
+  "min_price": "[min_price]",
+  "currency": "[currency]"
 }

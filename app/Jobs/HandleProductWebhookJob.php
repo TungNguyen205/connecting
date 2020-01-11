@@ -66,6 +66,12 @@ class HandleProductWebhookJob implements ShouldQueue
                     case 'product_title':
                         $data[$tag] = $productDetail['title'];
                         break;
+                    case 'min_price':
+                        $data[$tag] = $productDetail['price']['min_price'];
+                        break;
+                    case 'currency':
+                        $data[$tag] = $this->_shop['currency'];
+                        break;
                     default:
                         break;
                 }
