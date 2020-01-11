@@ -45,15 +45,12 @@ class HandleProductWebhookJob implements ShouldQueue
         $this->autoPostRepository = $autoPostRepository;
         $productRepo = new ProductRepository();
         $meta = [
-            'shop_id' => $this->_shop['id']
+            'shop' => $this->_shop
         ];
         $this->_product = ProductHelper::convertProductModel($this->_product, $meta);
         $product = $productRepo->createOrUpdate($this->_product);
 
         // post section
-
-
-
         $productDetail = $productRepo->detail($product->id, $this->_shop['id']);
 
         $autoPost = $this->autoPostRepository->detail($this->_shop['id']);

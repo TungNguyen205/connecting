@@ -24,8 +24,7 @@ class Template extends Base
     public function rules()
     {
         return [
-            'content'       => 'required',
-            'auto_post_id'  => 'required'
+            'content'       => 'required'
         ];
     }
 }

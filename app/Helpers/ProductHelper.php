@@ -27,7 +27,7 @@ class ProductHelper
             }
         }
 
-        $data['shop_id'] = $meta['shop_id'];
+        $data['shop_id'] = $meta['shop']['id'];
 
         $minPrice = $product['variants'][0]['price'];
         $maxPrice = $product['variants'][0]['price'];
@@ -45,7 +45,7 @@ class ProductHelper
             'max_price' => $maxPrice
         ];
 
-
+        $data['link'] = $meta['shop']['domain'].'/products/'.$product['handle'];
 
         return $data;
     }

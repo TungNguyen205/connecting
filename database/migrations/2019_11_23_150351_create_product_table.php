@@ -22,6 +22,7 @@ class CreateProductTable extends Migration
             $table->text('images')->nullable();
             $table->bigInteger('shop_id')->unsigned();
             $table->string('price');
+            $table->text('link')->nullable();
             $table->timestamps();
 
             $table->foreign('shop_id')->references('id')->on('shop')->onDelete('cascade')->onUpdate('cascade');

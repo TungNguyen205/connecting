@@ -32,7 +32,8 @@ class ProductModel extends Model
         'image',
         'images',
         'shop_id',
-        'price'
+        'price',
+        'link'
     ];
     protected $dates = [
         'created_at',

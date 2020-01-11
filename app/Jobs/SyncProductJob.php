@@ -93,7 +93,7 @@ class SyncProductJob implements ShouldQueue
             DB::beginTransaction();
             foreach($products as $product) {
                 $meta = [
-                    'shop_id'   => $shop['id']
+                    'shop'   => $shop
                 ];
                 $product = ProductHelper::convertProductModel($product, $meta);
                 $productRepo->createOrUpdate($product);
