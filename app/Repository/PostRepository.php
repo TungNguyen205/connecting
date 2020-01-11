@@ -29,7 +29,7 @@ class PostRepository
         }
     }
 
-    public function savePost(array $arg, $shopId, $userId)
+    public function saveAutoPost(array $arg, $shopId, $userId)
     {
         $postParams = [
             'post_type'     => $arg['post_type'],
@@ -54,23 +54,27 @@ class PostRepository
             if(empty($product)) {
                 return false;
             }
-            $mediaParams = [
-                'url' => $product['image']['src'],
-                'type' => 'image',
-                'width' => $product['image']['width'],
-                'height' => $product['image']['height'],
-                'shop_id' => $shopId,
-                'user_id' => $userId,
-            ];
-            $media = $mediaRepo->create($mediaParams);
-            if(!$media) {
-                return false;
+            
+            for($i = 0; $i < $arg['number_images']; $i++) {
+                $image = isset($product['images'][$i])? $product['images'][$i]: $product['images'][0];
+                $mediaParams = [
+                    'url' => $image['src'],
+                    'type' => 'image',
+                    'width' => $image['width'],
+                    'height' => $image['height'],
+                    'shop_id' => $shopId,
+                    'user_id' => $userId,
+                ];
+                $media = $mediaRepo->create($mediaParams);
+                if(!$media) {
+                    return false;
+                }
+                $postMediaParams = [
+                    'post_id' => $post->id,
+                    'media_id' => $media->id,
+                ];
+                PostMediaModel::create($postMediaParams);
             }
-            $postMediaParams = [
-                'post_id' => $post->id,
-                'media_id' => $media->id,
-            ];
-            PostMediaModel::create($postMediaParams);
         }
         return $post;
     }
