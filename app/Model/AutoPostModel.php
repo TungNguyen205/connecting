@@ -25,7 +25,7 @@ class AutoPostModel extends Model
      * @var array
      */
     protected $fillable = [
-       'id', 'shop_id', 'user_id', 'social_ids', 'template_id'
+       'id', 'shop_id', 'user_id', 'social_ids', 'template_id', 'post_type'
     ];
     protected $dates = [
         'created_at',

@@ -25,7 +25,8 @@ class AutoPost extends Base
     {
         return [
             'social_ids' => 'required',
-            'template_id' => 'required'
+            'template_id' => 'required',
+            'post_type' => 'required'
         ];
     }
 }

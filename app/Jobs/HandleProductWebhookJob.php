@@ -69,6 +69,9 @@ class HandleProductWebhookJob implements ShouldQueue
                     case 'currency':
                         $data[$tag] = $this->_shop['currency'];
                         break;
+                    case 'product_link':
+                        $data[$tag] = $productDetail['link'];
+                        break;
                     default:
                         break;
                 }
@@ -76,8 +79,8 @@ class HandleProductWebhookJob implements ShouldQueue
             $message = PostHelper::convertMessage($autoPost['template']['content'], $data);
 
             $postParams = [
-                'post_type'     => 'image',
-                'meta_link'     => null,
+                'post_type'     => $autoPost['post_type'],
+                'meta_link'     => $autoPost['post_type'] == 'link'? $productDetail['link']: null,
                 'product_id'    => $productDetail['id'],
                 'message'       => $message,
                 'social_ids'    => $autoPost['social_ids'],
