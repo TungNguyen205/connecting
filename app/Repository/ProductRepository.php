@@ -47,4 +47,13 @@ class ProductRepository
         }
         return null;
     }
+
+    public function checkProduct($platformProductId, $shopId)
+    {
+        $product = ProductModel::where('platform_id', $platformProductId)->where('shop_id', $shopId)->first();
+        if(!empty($product)) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -44,6 +44,11 @@ class HandleProductWebhookJob implements ShouldQueue
         $this->social = $social;
         $this->autoPostRepository = $autoPostRepository;
         $productRepo = new ProductRepository();
+
+        $productExist = $productRepo->checkProduct($this->_product['id'], $this->_shop['id']);
+        if($productExist) {
+            die();
+        }
         $meta = [
             'shop' => $this->_shop
         ];
@@ -55,7 +60,7 @@ class HandleProductWebhookJob implements ShouldQueue
 
         $autoPost = $this->autoPostRepository->detail($this->_shop['id']);
 
-        if(!empty($autoPost)) {
+        if(!empty($autoPost) && $autoPost['status']) {
             $tags = Common::getTagList();
             $data = [];
             foreach($tags as $k=>$tag) {
