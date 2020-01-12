@@ -91,7 +91,7 @@ class HandleProductWebhookJob implements ShouldQueue
                 'message'       => $message,
                 'social_ids'    => $autoPost['social_ids'],
                 'social_id'     => null,
-                'social_type'   => "facebook",
+                'social_type'   => null,
                 'status'        => "published"
             ];
 
@@ -100,7 +100,7 @@ class HandleProductWebhookJob implements ShouldQueue
             foreach($postDetail['socials'] as $social) {
                 $data = $postDetail;
                 $data['socials'] = $social;
-                $this->social->postSocial($postDetail['social_type'], $data);
+                $this->social->postSocial($social['social_type'], $data);
             }
         }
     }

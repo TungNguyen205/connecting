@@ -282,4 +282,11 @@ class Twitter
         }
     }
 
+    public function postSocial($data)
+    {
+        dd($data);
+        $this->setParameter($data['socials']['access_token']['oauth_token'], $data['socials']['access_token']['oauth_token_secret']);
+
+    }
+
 }
