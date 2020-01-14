@@ -284,9 +284,79 @@ class Twitter
 
     public function postSocial($data)
     {
-        dd($data);
         $this->setParameter($data['socials']['access_token']['oauth_token'], $data['socials']['access_token']['oauth_token_secret']);
 
+        $type = $data['post_type'];
+        $option = [];
+
+        switch ($type) {
+            case config('twitter.post_type.link'):
+                $option = $this->processForLinkType($data);
+                break;
+//            case config('facebook.post_type.text'):
+//                $source =[
+//                    'status' => true,
+//                    'data' => [
+//                        'published' => true,
+//                        'message' => $data['message'],
+//                    ]
+//                ] ;
+//                break;
+//            case config('facebook.post_type.image'):
+//                $source = $this->processForImageType($token, $data);
+//                break;
+//            case config('facebook.post_type.video'):
+//                break;
+//            case config('facebook.post_type.product'):
+//                $source = $this->processForProductType($token, $data);
+//                break;
+        }
+//dd($option);
+        $result = $this->postOauth1('statuses/update.json', $option);
+        dd($result);
+        if (!$result['status']) {
+            return [
+                'status' => false,
+                'message' => $result['message'],
+                'code' => @$result['code'],
+            ];
+        }
+
+
+    }
+
+    public function processForLinkType($data)
+    {
+        $query['status'] = $data['message']. ' '. $data['meta_link'];
+        $option = [
+            'query' => $query
+        ];
+        return $option;
+    }
+
+    private function postOauth1($url, $options = array())
+    {
+        $settingAuth = array(
+            'consumer_key' => $this->cusumerKey,
+            'consumer_secret' => $this->secretKey,
+            'token' => $this->accessToken,
+            'token_secret' => $this->accessTokenSecret,
+        );
+        $stack = HandlerStack::create();
+        $middleware = new Oauth1($settingAuth);
+        $stack->push($middleware);
+        $client = new Client([
+            'base_uri' => $this->baseUrl,
+            'handler' => $stack,
+            'auth' => 'oauth',
+        ]);
+        try {
+            $response = $client->post($url, $options);
+
+            return ['status' => true, 'data' => json_decode($response->getBody()->getContents())];
+        } catch (ClientException $e) {
+            return $this->handleClientException($e);
+        }
     }
 
 }

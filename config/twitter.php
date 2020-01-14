@@ -10,5 +10,11 @@ return [
         'base' => 'https://api.twitter.com/',
         'authorize' => 'https://api.twitter.com/oauth/authorize',
         'search_hashtag' => 'https://twitter.com/i/search/typeahead.json?filters=true&result_type=topics&src=COMPOSE&count=20&q=%23',
+    ],
+    'post_type' => [
+        'link' => 'link',
+        'text' => 'text',
+        'image' => 'image',
+        'video' => 'video',
     ]
 ];
