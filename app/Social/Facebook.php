@@ -175,7 +175,7 @@ class Facebook
     }
 
     public function postSocial($data){
-        $account = $data['socials'];
+        $account = $data['social'];
 
         try {
             $token = $this->getToken($account['access_token'], 'page');
@@ -201,9 +201,6 @@ class Facebook
                     break;
                 case config('facebook.post_type.video'):
                     break;
-                case config('facebook.post_type.product'):
-                    $source = $this->processForProductType($token, $data);
-                    break;
             }
 
             if (!$source['status']) {
@@ -211,13 +208,13 @@ class Facebook
                 return $source;
             }
             $response = $this->requestFacebookData('/me/feed', 'post', $source['data'], $token);
-            dd($response);
-            if ($response['status']) {
-                $response['data']['post_social_id'] = $response['data']['id'];
-                unset( $response['data']['id']);
-            } else {
-                $this->proccessError($account['social_id'], $response);
-            }
+//            dd($response);
+//            if ($response['status']) {
+//                $response['data']['post_social_id'] = $response['data']['id'];
+//                unset( $response['data']['id']);
+//            } else {
+//                $this->proccessError($account['social_id'], $response);
+//            }
 
         } catch (\Exception $ex) {
             $response = [

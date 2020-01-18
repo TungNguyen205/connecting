@@ -24,7 +24,8 @@ class Template extends Base
     public function rules()
     {
         return [
-            'content'       => 'required'
+            'social_id' => 'required',
+            'content'   => 'required'
         ];
     }
 }

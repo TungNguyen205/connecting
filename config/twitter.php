@@ -16,5 +16,30 @@ return [
         'text' => 'text',
         'image' => 'image',
         'video' => 'video',
+    ],
+    'media' => [
+        'media_category' => [
+            'tweet' => [
+                'tweet_video' => 'tweet_video',
+                'tweet_image' => 'tweet_image',
+                'tweet_gif' => 'tweet_gif',
+            ],
+            'dm' => [
+                'dm_video' => 'dm_video',
+                'dm_image' => 'dm_image',
+                'dm_gif' => 'dm_gif',
+            ],
+        ],
+        'type_image' => [
+            'png',
+            'jpeg',
+            'jpg',
+        ],
+        'type_gif' => [
+            'gif',
+        ],
+        'type_video' => [
+            'mp4',
+        ],
     ]
 ];

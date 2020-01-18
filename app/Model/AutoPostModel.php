@@ -25,17 +25,12 @@ class AutoPostModel extends Model
      * @var array
      */
     protected $fillable = [
-       'id', 'shop_id', 'user_id', 'social_ids', 'template_id', 'post_type'
+       'id', 'shop_id', 'user_id', 'social_id', 'template_id', 'post_type', 'number_images'
     ];
     protected $dates = [
         'created_at',
         'updated_at'
     ];
-
-    protected $casts = [
-        'social_ids' => 'array'
-    ];
-
 
     public function getIdAttribute($value)
     {

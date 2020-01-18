@@ -24,9 +24,9 @@ class AutoPost extends Base
     public function rules()
     {
         return [
-            'social_ids' => 'required',
-            'template_id' => 'required',
-            'post_type' => 'required'
+            'social_id'     => 'required',
+            'template_id'   => 'required',
+            'post_type'     => 'required'
         ];
     }
 }

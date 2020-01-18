@@ -35,9 +35,9 @@ class SocialRepository
         return null;
     }
 
-    public function checkSocial($shopId, array $socialIds)
+    public function checkSocial($shopId, $socialId)
     {
-        $socials = SocialModel::where('shop_id', $shopId)->whereIn('id', $socialIds)->get();
+        $socials = SocialModel::where('shop_id', $shopId)->where('id', $socialId)->first();
         if($socials) {
             return $socials->toArray();
         }

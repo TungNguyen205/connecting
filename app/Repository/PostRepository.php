@@ -17,19 +17,19 @@ class PostRepository
         $post = PostModel::with(['medias'])->where('id', $id)->where('shop_id', $shopId)->where('user_id', $userId)->first();
         if($post) {
             $post = $post->toArray();
-            $socials = SocialModel::where('shop_id', $shopId)->whereIn('id', $post['social_ids'])
-                ->get();
+            $socials = SocialModel::where('shop_id', $shopId)->where('id', $post['social_id'])
+                ->first();
             if($socials) {
                 $socials = $socials->toArray();
             } else {
                 $socials = [];
             }
-            $post['socials'] = $socials;
+            $post['social'] = $socials;
             return $post;
         }
     }
 
-    public function saveAutoPost(array $arg, $shopId, $userId)
+    public function savePost(array $arg, $shopId, $userId)
     {
         $postParams = [
             'post_type'     => $arg['post_type'],
@@ -54,7 +54,6 @@ class PostRepository
             if(empty($product)) {
                 return false;
             }
-            
             for($i = 0; $i < $arg['number_images']; $i++) {
                 $image = isset($product['images'][$i])? $product['images'][$i]: $product['images'][0];
                 $mediaParams = [

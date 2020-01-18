@@ -284,8 +284,6 @@ class Twitter
 
     public function postSocial($data)
     {
-        $this->setParameter($data['socials']['access_token']['oauth_token'], $data['socials']['access_token']['oauth_token_secret']);
-
         $type = $data['post_type'];
         $option = [];
 
@@ -293,36 +291,98 @@ class Twitter
             case config('twitter.post_type.link'):
                 $option = $this->processForLinkType($data);
                 break;
-//            case config('facebook.post_type.text'):
-//                $source =[
-//                    'status' => true,
-//                    'data' => [
-//                        'published' => true,
-//                        'message' => $data['message'],
-//                    ]
-//                ] ;
-//                break;
-//            case config('facebook.post_type.image'):
-//                $source = $this->processForImageType($token, $data);
-//                break;
-//            case config('facebook.post_type.video'):
-//                break;
-//            case config('facebook.post_type.product'):
-//                $source = $this->processForProductType($token, $data);
-//                break;
+            case config('twitter.post_type.text'):
+                $query['status'] = $data['message'];
+                $option =[
+                    'status' => true,
+                    'data' => [
+                        'query' => $query
+                    ]
+                ] ;
+                break;
+            case config('facebook.post_type.image'):
+                $option = $this->processForImageType($data);
+                break;
+            case config('facebook.post_type.video'):
+                break;
         }
-//dd($option);
+        if(!$option['status']) {
+            return false;
+        }
+        $authToken = $data['social']['access_token']['oauth_token'];
+        $authTokenSecret = $data['social']['access_token']['oauth_token_secret'];
+        $this->setParameter($authToken, $authTokenSecret);
+        $option = $option['data'];
+
         $result = $this->postOauth1('statuses/update.json', $option);
-        dd($result);
-        if (!$result['status']) {
+//        dd($result);
+//        if (!$result['status']) {
+//            return [
+//                'status' => false,
+//                'message' => $result['message'],
+//                'code' => @$result['code'],
+//            ];
+//        }
+    }
+
+    public function processForImageType($data)
+    {
+        $query['status'] = $data['message'];
+        $media_ids = [];
+        foreach ($data['medias'] as $media) {
+            $mediaUpload = $this->mediaUpload($data['social']['access_token']['oauth_token'], $data['social']['access_token']['oauth_token_secret'],
+                $media['url']);
+            if (!$mediaUpload['status']) {
+                return [
+                    'status' => false,
+                    'message' => $mediaUpload['message'],
+                    'code' => @$mediaUpload['code'],
+                ];
+            }
+            array_push($media_ids, $mediaUpload['data']->media_id_string);
+        }
+
+        try {
+            foreach ($media_ids as $media_id) {
+                while (true) {
+                    $mediaUploadStatus = $this->mediaUploadStatus($media_id);
+                    if (isset($mediaUploadStatus['data']->processing_info->state) &&
+                        $mediaUploadStatus['data']->processing_info->state === 'failed') {
+                        return [
+                            'status' => false,
+                            'message' => $mediaUploadStatus['data']->processing_info->error->message,
+                            'code' => @$mediaUploadStatus['data']->processing_info->error->code,
+                        ];
+                    }
+                    if (isset($mediaUploadStatus['data']->processing_info->state) &&
+                        $mediaUploadStatus['data']->processing_info->state !== 'succeeded') {
+                        if (isset($mediaUploadStatus['data']->processing_info->check_after_secs)) {
+                            sleep($mediaUploadStatus['data']->processing_info->check_after_secs);
+                        } else {
+                            sleep(3);
+                        }
+                        continue;
+                    }
+                    break;
+                }
+            }
+
+            if (!empty($media_ids)) {
+                $query['media_ids'] = implode(',', $media_ids);
+            }
+            return [
+                'status' => true,
+                'data'  => [
+                    'query' => $query
+                ]
+            ];
+        } catch (\Exception $exception) {
             return [
                 'status' => false,
-                'message' => $result['message'],
-                'code' => @$result['code'],
+                'message' => __('socialpost_validation.twitter.post.error'),
+                'code' => $exception->getCode(),
             ];
         }
-
-
     }
 
     public function processForLinkType($data)
@@ -331,7 +391,134 @@ class Twitter
         $option = [
             'query' => $query
         ];
-        return $option;
+        return [
+            'status' => true,
+            'data' => $option
+        ];
+    }
+
+    private function mediaUpload($twitter_access_token, $twitter_access_token_secret, $media_path)
+    {
+        $this->setParameter($twitter_access_token, $twitter_access_token_secret, 'upload.twitter.com');
+//        try {
+            $mediaUploadInit = $this->mediaUploadInit($media_path);
+            if (!$mediaUploadInit['status']) {
+                return $mediaUploadInit;
+            }
+            $mediaUploadAppend = $this->mediaUploadAppend($mediaUploadInit['data']->media_id_string, $media_path);
+            if (!$mediaUploadAppend['status']) {
+                return $mediaUploadAppend;
+            }
+            $mediaUploadFinalize = $this->mediaUploadFinalize($mediaUploadInit['data']->media_id_string);
+
+            return $mediaUploadFinalize;
+//        } catch (\Exception $exception) {
+//            return ['status' => false, 'message' => $exception->getMessage()];
+//        }
+    }
+
+    private function mediaUploadInit($media_path)
+    {
+        $path_parts = pathinfo($media_path);
+        $mediaExtension = $path_parts['extension'];
+        $mediaContentLength = get_headers($media_path, 1)['Content-Length'];
+        $mediaContentType = get_headers($media_path, 1)['Content-Type'];
+//        try {
+            $query = array(
+                'command' => 'INIT',
+                'total_bytes' => $mediaContentLength,
+                'media_type' => $mediaContentType,
+            );
+            if (in_array($mediaExtension, config('twitter.media.type_video'))) {
+                $query['media_category'] = config('twitter.media.media_category.tweet.tweet_video');
+            } elseif (in_array($mediaExtension, config('twitter.media.type_image'))) {
+                $query['media_category'] = config('twitter.media.media_category.tweet.tweet_image');
+            } elseif (in_array($mediaExtension, config('twitter.media.type_gif'))) {
+                $query['media_category'] = config('twitter.media.media_category.tweet.tweet_gif');
+            }
+            $options = array(
+                'query' => $query,
+            );
+            $result = $this->postOauth1('media/upload.json', $options);
+
+            return $result;
+//        } catch (\Exception $exception) {
+//            return ['status' => false, 'message' => $exception->getMessage()];
+//        }
+    }
+
+    private function mediaUploadAppend($media_id, $media_path)
+    {
+        $sizeChunk = 1 * (1024 * 1024);
+//        try {
+            $mediaContentLength = get_headers($media_path, 1)['Content-Length'];
+            $fp = fopen($media_path, 'r');
+            for ($i = 0; $i <= $mediaContentLength / $sizeChunk; $i++) {
+                $chunk = stream_get_contents($fp, $sizeChunk, $i * $sizeChunk);
+                $options = array(
+                    'multipart' => [
+                        [
+                            'name' => 'command',
+                            'contents' => 'APPEND',
+                        ],
+                        [
+                            'name' => 'media_id',
+                            'contents' => $media_id,
+                        ],
+                        [
+                            'name' => 'segment_index',
+                            'contents' => $i,
+                        ],
+                        [
+                            'name' => 'media_data',
+                            'contents' => base64_encode($chunk),
+                        ],
+                    ],
+                );
+                $result = $this->postOauth1('media/upload.json', $options);
+                if (!$result['status']) {
+                    return $result;
+                }
+            }
+
+            return ['status' => true];
+//        } catch (\Exception $exception) {
+//            return ['status' => false, 'message' => $exception->getMessage()];
+//        }
+    }
+
+    private function mediaUploadFinalize($media_id)
+    {
+//        try {
+            $options = array(
+                'query' => [
+                    'command' => 'FINALIZE',
+                    'media_id' => $media_id,
+                ],
+            );
+            $result = $this->postOauth1('media/upload.json', $options);
+
+            return $result;
+//        } catch (\Exception $exception) {
+//            return ['status' => false, 'message' => $exception->getMessage()];
+//        }
+    }
+
+    private function mediaUploadStatus($media_id)
+    {
+//        try {
+            $options = array(
+                'query' => [
+                    'command' => 'STATUS',
+                    'media_id' => $media_id,
+                ],
+            );
+            $result = $this->getOauth1('media/upload.json', $options);
+
+            return $result;
+//        } catch (\Exception $exception) {
+//            return ['status' => false, 'message' => $exception->getMessage()];
+//        }
     }
 
     private function postOauth1($url, $options = array())
@@ -350,13 +537,13 @@ class Twitter
             'handler' => $stack,
             'auth' => 'oauth',
         ]);
-        try {
+//        try {
             $response = $client->post($url, $options);
 
             return ['status' => true, 'data' => json_decode($response->getBody()->getContents())];
-        } catch (ClientException $e) {
-            return $this->handleClientException($e);
-        }
+//        } catch (ClientException $e) {
+//            return $this->handleClientException($e);
+//        }
     }
 
 }
