@@ -10,6 +10,7 @@ use App\Model\MediaModel;
 use App\Repository\ProductRepository;
 use App\Repository\MediaRepository;
 use App\Model\PostMediaModel;
+use App\Model\PinterestBoardModel;
 class PostRepository
 {
     public function detail($id, $shopId, $userId)
@@ -25,6 +26,10 @@ class PostRepository
                 $socials = [];
             }
             $post['social'] = $socials;
+            $board = PinterestBoardModel::where('social_id', $post['social']['social_id'])->first();
+            if(!empty($board)) {
+                $post['board'] = $board->toArray();
+            }
             return $post;
         }
     }

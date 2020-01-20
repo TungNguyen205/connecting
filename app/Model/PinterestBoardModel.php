@@ -4,17 +4,17 @@ namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
 /**
- * Class AutoPostModel
+ * Class PinterestBoardModel
  *
  * @package App\Models
  */
-class AutoPostModel extends Model
+class PinterestBoardModel extends Model
 {
-    public $incrementing = true;
+    public $incrementing = false;
     /**
      * @var string
      */
-    protected $table = 'auto_post';
+    protected $table = 'pinterest_board';
 
     /**
      * @var string
@@ -25,21 +25,20 @@ class AutoPostModel extends Model
      * @var array
      */
     protected $fillable = [
-       'id', 'shop_id', 'user_id', 'social_id', 'template_id', 'post_type', 'number_images', 'pinterest_board_id'
+        'id', 'social_id', 'name', 'url', 'date_create', 'image'
     ];
     protected $dates = [
         'created_at',
         'updated_at'
     ];
 
+    protected $casts = [
+        'image' => 'array'
+    ];
+
     public function getIdAttribute($value)
     {
         return (float)($value);
-    }
-
-    public function template()
-    {
-        return $this->belongsTo('App\Model\TemplateModel', 'template_id', 'id');
     }
 
 }

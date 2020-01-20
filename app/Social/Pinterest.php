@@ -3,18 +3,24 @@ namespace App\Social;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use App\Repository\SocialRepository;
+use App\Repository\PinterestBoardRepository;
+use App\Helpers\PinterestHelper;
 class Pinterest
 {
     private $baseUrl;
     private $clientId;
     private $clientSecret;
+    private $accessToken;
+    private $socialRepository;
+    private $pinterestBoardRepository;
 
-    public function __construct(SocialRepository $socialRepository)
+    public function __construct(SocialRepository $socialRepository, PinterestBoardRepository $pinterestBoardRepository)
     {
         $this->baseUrl = config('pinterest.url.base');
         $this->clientId = config('pinterest.client_id');
         $this->clientSecret = config('pinterest.client_secret');
         $this->socialRepository = $socialRepository;
+        $this->pinterestBoardRepository = $pinterestBoardRepository;
     }
 
     public function generateUrl($token, $socialId = null)
@@ -47,7 +53,8 @@ class Pinterest
         ];
         $accessTokenResponse = $this->postRequest('oauth/token', $params);
         if($accessTokenResponse['status']) {
-            $userInfo = $this->userInfo($accessTokenResponse['data']->access_token);
+            $this->setParameter($accessTokenResponse['data']->access_token, false);
+            $userInfo = $this->userInfo();
             if($userInfo['status']) {
                 $data = $userInfo['data']['data'];
                 $params = [
@@ -60,19 +67,31 @@ class Pinterest
                     'access_token' => $accessTokenResponse['data']->access_token,
                     'shop_id' => $request['userInfo']['id'],
                 ];
-                $data = $this->socialRepository->createOrUpdate($params);
-                return response()->json(['status' => true, 'data' => $data]);
+                $this->socialRepository->createOrUpdate($params);
+
+                $fields = ['created_at', 'id', 'image', 'name', 'url'];
+                $boards = $this->syncBoards($fields);
+                if($boards['status'] && !empty($boards['data'])) {
+                    foreach($boards['data'] as $board) {
+                        $params = PinterestHelper::convert($board);
+                        $params['social_id'] = $data['id'];
+                        $params['shop_id'] = $request['userInfo']['id'];
+                        $this->pinterestBoardRepository->createOrUpdate($params);
+                    }
+                }
             }
+
+            return response()->json(['status' => true]);
         }
     }
 
-    public function userInfo($accessToken)
+    public function userInfo()
     {
         $fields = [
             'account_type', 'bio', 'counts', 'created_at', 'first_name', 'id', 'image', 'last_name', 'url', 'username'
         ];
         return $this->getRequest('me', [
-            'access_token'  => $accessToken,
+            'access_token'  => $this->accessToken,
             'fields'        => implode(",", $fields)
         ]);
     }
@@ -129,5 +148,58 @@ class Pinterest
             $message = isset($response->errors->base[0]) ? $response->errors->base[0] : 'Error request';
             return ['status' => false, 'message' => $message, 'response' => $response];
         }
+    }
+
+    public function postRequest2($url, $field, $data = [])
+    {
+        $client = new Client();
+        try{
+            $response = $client->request(
+                'POST',
+                "$this->baseUrl$url",
+                [
+                    'headers' => [
+                        'Content-Type' => 'application/json',
+                    ],
+                    'query' => $field,
+                    'body' => json_encode($data)
+                ]);
+            return ['status' => true, 'data' => json_decode($response->getBody()->getContents())];
+
+        } catch (ClientException $exception)
+        {
+            $response = json_decode($exception->getResponse()->getBody()->getContents());
+            $message = isset($response->errors->base[0]) ? $response->errors->base[0] : 'Error request';
+            return ['status' => false, 'message' => $message, 'response' => $response];
+        }
+    }
+
+    public function postSocial($data)
+    {
+        $this->setParameter($data['social']['access_token']);
+        $board = trim(str_replace("https://www.pinterest.com","",$data['board']['url']),"/"); ;
+        $params = [
+            'board'     => $board,
+            'note'      => $data['message'],
+            'link'      => $data['meta_link'],
+            'image_url' => $data['medias'][0]['url']
+        ];
+
+        $a = $this->postRequest2('pins', ['access_token' => $this->accessToken],$params);
+        dd($a);
+
+    }
+
+    public function syncBoards($fields)
+    {
+        $params = [
+            'access_token' => $this->accessToken,
+            'fields' => implode(",", $fields)
+        ];
+        $data = $this->getRequest('me/boards', $params);
+        if(!$data['status']) {
+            return ['status' => false, 'message' => $data['message']];
+        }
+        return ['status' => true, 'data' => $data['data']['data']];
     }
 }

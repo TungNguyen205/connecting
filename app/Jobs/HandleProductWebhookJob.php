@@ -85,15 +85,16 @@ class HandleProductWebhookJob implements ShouldQueue
                 $message = PostHelper::convertMessage($autoPost['template']['content'], $data);
 
                 $postParams = [
-                    'post_type'     => $autoPost['post_type'],
-                    'number_images'  => $autoPost['number_images'],
-                    'meta_link'     => $autoPost['post_type'] == 'link'? $productDetail['link']: null,
-                    'product_id'    => $productDetail['id'],
-                    'message'       => $message,
-                    'social_ids'    => null,
-                    'social_id'     => $autoPost['social_id'],
-                    'social_type'   => null,
-                    'status'        => "published"
+                    'post_type'             => $autoPost['post_type'],
+                    'number_images'         => $autoPost['number_images'],
+                    'meta_link'             => $productDetail['link'],
+                    'product_id'            => $productDetail['id'],
+                    'message'               => $message,
+                    'social_ids'            => null,
+                    'social_id'             => $autoPost['social_id'],
+                    'social_type'           => null,
+                    'status'                => "published",
+                    'pinterest_board_id'    => $autoPost['pinterest_board_id']
                 ];
 
                 $post = $this->postRepository->savePost($postParams, $this->_shop['id'], $this->_shop['user_id']);
