@@ -26,9 +26,7 @@ class PostModel extends Model
      */
     protected $fillable = [
         'id', 'post_type', 'product_id', 'meta_link', 'sub_type', 'message', 'time_on', 'social_ids', 'social_id',
-        'shop_id', 'user_id', 'social_type', 'status', 'is_repeat', 'repeat_value', 'repeat_unit',
-        'post_social_id', 'publish_is_error', 'error_message',
-        'media_index', 'social_insight', 'pinterest_board_id'
+        'shop_id', 'user_id', 'social_type', 'status', 'post_social_id', 'error_message', 'pinterest_board_id'
     ];
     protected $dates = [
         'created_at',

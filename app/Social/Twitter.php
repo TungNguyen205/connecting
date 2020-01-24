@@ -46,7 +46,6 @@ class Twitter
         $oauth_verifier = $request['oauth_verifier'];
         $userInfo = $request['userInfo'];
         $accessToken = $this->accessToken($oauth_token, $oauth_verifier);
-
         if (!$accessToken['status']) {
             return [
                 'status' => false,
@@ -315,14 +314,19 @@ class Twitter
         $option = $option['data'];
 
         $result = $this->postOauth1('statuses/update.json', $option);
-//        dd($result);
-//        if (!$result['status']) {
-//            return [
-//                'status' => false,
-//                'message' => $result['message'],
-//                'code' => @$result['code'],
-//            ];
-//        }
+        if (!$result['status']) {
+            return [
+                'status' => false,
+                'message' => $result['message'],
+                'code' => @$result['code'],
+            ];
+        }
+        return [
+            'status' => true,
+            'data' => [
+                'post_social_id' => $result['data']->id_str
+            ]
+        ];
     }
 
     public function processForImageType($data)

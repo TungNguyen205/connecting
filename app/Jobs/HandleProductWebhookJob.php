@@ -90,7 +90,6 @@ class HandleProductWebhookJob implements ShouldQueue
                     'meta_link'             => $productDetail['link'],
                     'product_id'            => $productDetail['id'],
                     'message'               => $message,
-                    'social_ids'            => null,
                     'social_id'             => $autoPost['social_id'],
                     'social_type'           => null,
                     'status'                => "published",
@@ -99,7 +98,14 @@ class HandleProductWebhookJob implements ShouldQueue
 
                 $post = $this->postRepository->savePost($postParams, $this->_shop['id'], $this->_shop['user_id']);
                 $postDetail = $this->postRepository->detail($post->id, $this->_shop['id'], $this->_shop['user_id']);
-                $this->social->postSocial($postDetail['social']['social_type'], $postDetail);
+                $postResult = $this->social->postSocial($postDetail['social']['social_type'], $postDetail);
+                if(!$postResult['status']) {
+
+                }
+                $params = [
+                    'post_social_id' => $postResult['data']['post_social_id']
+                ];
+                $this->postRepository->update($postDetail['id'], $params);
             }
         }
     }

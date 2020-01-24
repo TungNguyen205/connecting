@@ -4,14 +4,12 @@ class Social
 {
     private $twitter;
     private $pinterest;
-    private $tumblr;
     private $facebook;
 
-    public function __construct(Twitter $twitter, Pinterest $pinterest, Tumblr $tumblr, Facebook $facebook)
+    public function __construct(Twitter $twitter, Pinterest $pinterest, Facebook $facebook)
     {
         $this->twitter = $twitter;
         $this->pinterest = $pinterest;
-        $this->tumblr = $tumblr;
         $this->facebook = $facebook;
     }
 

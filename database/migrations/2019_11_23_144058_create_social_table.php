@@ -24,6 +24,7 @@ class CreateSocialTable extends Migration
             $table->string('social_type');
             $table->string('access_token', 1000)->nullable();
             $table->bigInteger('shop_id')->unsigned();
+            $table->string('error')->nullable();
             $table->timestamps();
 
         });

@@ -2,14 +2,17 @@
 namespace App\Social;
 use App\Repository\SocialRepository;
 use Firebase\JWT\JWT;
+use App\Repository\PostRepository;
 class Facebook
 {
     private $fb;
     private $socialRepository;
+    private $postRepository;
 
-    public function __construct(SocialRepository $socialRepository)
+    public function __construct(SocialRepository $socialRepository, PostRepository $postRepository)
     {
         $this->socialRepository = $socialRepository;
+        $this->postRepository = $postRepository;
         $this->fb = new \Facebook\Facebook([
             'app_id' => config('facebook.app_id'),
             'app_secret' => config('facebook.app_secret'),
@@ -208,13 +211,16 @@ class Facebook
                 return $source;
             }
             $response = $this->requestFacebookData('/me/feed', 'post', $source['data'], $token);
-//            dd($response);
-//            if ($response['status']) {
-//                $response['data']['post_social_id'] = $response['data']['id'];
-//                unset( $response['data']['id']);
-//            } else {
-//                $this->proccessError($account['social_id'], $response);
-//            }
+            if ($response['status']) {
+                return [
+                    'status' => true,
+                    'data'  => [
+                        'post_social_id' => $response['data']['id']
+                    ]
+                ];
+            } else {
+                $this->proccessError($account['social_id'], $response);
+            }
 
         } catch (\Exception $ex) {
             $response = [
@@ -240,24 +246,6 @@ class Facebook
             'link' => $data['meta_link']
         ];
 
-        return [
-            'status' => true,
-            'data' => $source
-        ];
-    }
-
-    private function processForProductType($token,$data){
-        $subType =  $data['sub_type'];
-        if($subType == config('social.post_sub_type.image')) {
-            return $this->processForImageType($token,$data);
-        } else {
-
-            $source = [
-                'published' => true,
-                'message' => $data['message'],
-                'link' => $data['meta_link']
-            ];
-        }
         return [
             'status' => true,
             'data' => $source

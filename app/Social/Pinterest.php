@@ -168,6 +168,7 @@ class Pinterest
 
         } catch (ClientException $exception)
         {
+            dd($exception);
             $response = json_decode($exception->getResponse()->getBody()->getContents());
             $message = isset($response->errors->base[0]) ? $response->errors->base[0] : 'Error request';
             return ['status' => false, 'message' => $message, 'response' => $response];
@@ -185,8 +186,16 @@ class Pinterest
             'image_url' => $data['medias'][0]['url']
         ];
 
-        $a = $this->postRequest2('pins', ['access_token' => $this->accessToken],$params);
-        dd($a);
+        $pin = $this->postRequest2('pins/', ['access_token' => $this->accessToken],$params);
+        if(!$pin['status']) {
+
+        }
+        return [
+          'status' => true,
+          'data'   => [
+              'post_social_id' => $pin['data']->data->id
+          ]
+        ];
 
     }
 

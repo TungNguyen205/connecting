@@ -21,18 +21,14 @@ class CreatePostTable extends Migration
             $table->string('sub_type')->nullable();
             $table->text('message')->nullable();
             $table->dateTime('time_on')->nullable();
-            $table->string('social_ids')->nullable();
             $table->string('social_id')->nullable();
             $table->bigInteger('pinterest_board_id')->nullable();
             $table->integer('shop_id')->nullable();
             $table->integer('user_id')->nullable();
             $table->string('social_type')->nullable();
-            $table->enum('status', ['scheduled', 'published', 'draft']);
+            $table->enum('status', ['publish', 'error'])->nullable();
             $table->string('post_social_id')->nullable();
-            $table->boolean('publish_is_error')->default(false);
             $table->string('error_message')->nullable();
-            $table->string('media_index')->nullable();
-            $table->text('social_insight')->nullable();
             $table->timestamps();
         });
     }

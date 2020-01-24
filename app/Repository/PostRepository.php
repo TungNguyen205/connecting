@@ -41,7 +41,6 @@ class PostRepository
             'meta_link'     => $arg['meta_link'],
             'product_id'    => $arg['product_id'],
             'message'       => $arg['message'],
-            'social_ids'    => $arg['social_ids'],
             'social_id'     => $arg['social_id'],
             'shop_id'       => $shopId,
             'user_id'       => $userId,
@@ -81,5 +80,13 @@ class PostRepository
             }
         }
         return $post;
+    }
+
+    public function update($id, array $args)
+    {
+        if($post = PostModel::where('id', $id)->first()) {
+            return $post->update($args);
+        }
+        return false;
     }
 }
