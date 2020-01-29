@@ -214,6 +214,14 @@ class Pinterest
 
     public function createPinterestBoard($data)
     {
+        $checkBoardNameExist = $this->pinterestBoardRepository->getBy(['name' => $data['name'], 'social_id' => $data['social']['social_id']]);
+
+        if($checkBoardNameExist) {
+            return [
+                'status'    => false,
+                'message'   => 'Board name exist'
+            ];
+        }
         $this->setParameter($data['social']['access_token']);
         $params = [
             'name' => $data['name']

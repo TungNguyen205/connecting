@@ -14,4 +14,13 @@ class PinterestBoardRepository
         }
         return PinterestBoardModel::create($args);
     }
+
+    public function getBy(array $condition)
+    {
+        $board = PinterestBoardModel::where($condition)->first();
+        if($board) {
+            return $board->toArray();
+        }
+        return null;
+    }
 }
