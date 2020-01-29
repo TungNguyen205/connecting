@@ -100,11 +100,15 @@ class HandleProductWebhookJob implements ShouldQueue
                 $postDetail = $this->postRepository->detail($post->id, $this->_shop['id'], $this->_shop['user_id']);
                 $postResult = $this->social->postSocial($postDetail['social']['social_type'], $postDetail);
                 if(!$postResult['status']) {
-
+                    $params = [
+                        'post_social_id' => $postResult['data']['post_social_id']
+                    ];
+                } else {
+                    $params = [
+                        'error_message' => $postResult['message']
+                    ];
                 }
-                $params = [
-                    'post_social_id' => $postResult['data']['post_social_id']
-                ];
+
                 $this->postRepository->update($postDetail['id'], $params);
             }
         }

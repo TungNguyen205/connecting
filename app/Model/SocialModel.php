@@ -30,7 +30,8 @@ class SocialModel extends Model
     ];
 
     protected $casts = [
-        'access_token' => 'array'
+        'access_token' => 'array',
+        'error' => 'array'
     ];
 
     protected $dates = [

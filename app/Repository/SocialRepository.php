@@ -43,4 +43,14 @@ class SocialRepository
         }
         return false;
     }
+
+    public function update(array $condition, array $args)
+    {
+        $socials = SocialModel::where($condition)->first();
+        if($socials) {
+            return $socials->update($args);
+        }
+        return false;
+    }
+
 }

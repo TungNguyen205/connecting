@@ -168,17 +168,36 @@ class Pinterest
 
         } catch (ClientException $exception)
         {
-            dd($exception);
-            $response = json_decode($exception->getResponse()->getBody()->getContents());
-            $message = isset($response->errors->base[0]) ? $response->errors->base[0] : 'Error request';
-            return ['status' => false, 'message' => $message, 'response' => $response];
+            $statusCode = $exception->getResponse()->getStatusCode();
+            if($statusCode === 401) {
+//                dd($exception->getResponse()->getBody()->getContents());
+                return ['status' => false, 'message' => json_decode($exception->getResponse()->getBody()->getContents()), 'code' => $statusCode];
+            } else {
+
+            }
+
         }
+    }
+
+    private function handleAccountError($socialId, $message)
+    {
+        $social = $this->socialRepository->getBy(['social_id' => $socialId]);
+        if(!$social) {
+            return ['status' => false, 'message' => 'Social not found'];
+        }
+        $condition = [
+            'social_id' => $socialId
+        ];
+        $params = [
+            'error' => $message
+        ];
+        return $this->socialRepository->update($condition, $params);
     }
 
     public function postSocial($data)
     {
         $this->setParameter($data['social']['access_token']);
-        $board = trim(str_replace("https://www.pinterest.com","",$data['board']['url']),"/"); ;
+        $board = trim(str_replace("https://www.pinterest.com","",$data['board']['url']),"/");
         $params = [
             'board'     => $board,
             'note'      => $data['message'],
@@ -188,7 +207,12 @@ class Pinterest
 
         $pin = $this->postRequest2('pins/', ['access_token' => $this->accessToken],$params);
         if(!$pin['status']) {
-
+            if($pin['code'] === 401) {
+                $this->handleAccountError($data['social']['social_id'], $pin['message']);
+                return ['status' => false];
+            } else {
+                return ['status' => false, 'message' => $pin['message']];
+            }
         }
         return [
           'status' => true,
@@ -230,8 +254,14 @@ class Pinterest
             $params['description'] = $data['description'];
         }
         $board = $this->postRequest2('boards/', ['access_token' => $this->accessToken],$params);
-        if(!$board['status']) {
 
+        if(!$board['status']) {
+            if($board['code'] === 401) {
+                $this->handleAccountError($data['social']['social_id'], $board['message']);
+                return ['status' => false];
+            } else {
+                return ['status' => false, 'message' => $board['message']];
+            }
         }
         $boardParams = [
             'id' => $board['data']->data->id,
@@ -246,4 +276,5 @@ class Pinterest
         }
         return ['status' => true, 'message' => 'Create board success'];
     }
+
 }
