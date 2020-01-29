@@ -211,4 +211,31 @@ class Pinterest
         }
         return ['status' => true, 'data' => $data['data']['data']];
     }
+
+    public function createPinterestBoard($data)
+    {
+        $this->setParameter($data['social']['access_token']);
+        $params = [
+            'name' => $data['name']
+        ];
+        if(!empty($data['description'])) {
+            $params['description'] = $data['description'];
+        }
+        $board = $this->postRequest2('boards/', ['access_token' => $this->accessToken],$params);
+        if(!$board['status']) {
+
+        }
+        $boardParams = [
+            'id' => $board['data']->data->id,
+            'social_id' => $data['social']['social_id'],
+            'url' => $board['data']->data->url,
+            'name' => $board['data']->data->name,
+            'date_create' => date('Y-m-d H:i:s'),
+        ];
+        $boardCreate = $this->pinterestBoardRepository->createOrUpdate($boardParams);
+        if(!$boardCreate) {
+            return ['status' => false, 'message' => 'Create board fail'];
+        }
+        return ['status' => true, 'message' => 'Create board success'];
+    }
 }

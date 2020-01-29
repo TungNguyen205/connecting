@@ -28,4 +28,9 @@ class Social
         return $this->{$socialType}->postSocial($data);
     }
 
+    public function createPinterestBoard($data)
+    {
+        return $this->pinterest->createPinterestBoard($data);
+    }
+
 }

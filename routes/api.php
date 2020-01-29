@@ -32,7 +32,7 @@ Route::group(['prefix' => 'product'], function() {
 Route::group(['prefix' => 'social'], function() {
     Route::post('generate_url', 'SocialController@generateUrl')->middleware('auth.shop');
     Route::get('auth', 'SocialController@auth')->name('social.callback')->middleware('auth.social');
-    Route::post('pinterest', 'SocialController@testPinterest');
+    Route::post('pinterest', 'SocialController@createPinterestBoard')->middleware('auth.shop');
 });
 
 Route::group(['middleware' => 'auth.shop'], function() {
